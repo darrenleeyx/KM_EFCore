@@ -2,22 +2,6 @@
 *** Readme template extracted from https://github.com/othneildrew/Best-README-Template
 -->
 
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
 <br />
 <div align="center">
   <h3 align="center">Entity Framework Core (EF Core)</h3>
@@ -60,9 +44,10 @@
 
 In this repository, we will be covering the basics of EF Core which you can refer to setup on your projects.
 
-Two approaches:
-* Code First
-* Database First
+### Built With
+- .NET 7
+- EFCore 7
+- SqlServer
 
  
 # Code First
@@ -70,14 +55,40 @@ Code first, as the name implies, you will write the database schemas in your cod
 
 Steps taken:
 
-1. Add NuGet Packages - EntityFrameworkCore and EntityFrameworkCore.SqlServer (or any other database)
+1. Add NuGet Packages - EntityFrameworkCore and EntityFrameworkCore.SqlServer to (CodeFirst.Persistence)
 
-    ```sh
+    ```console
     PM > Install-Package Microsoft.EntityFrameworkCore
     PM > Install-Package Microsoft.EntityFrameworkCore.SqlServer
     ```
 
-2. Create DbContext
+2. Create files:
+    - Weather.cs (Entity)
+    - WeatherConfiguration.cs (Schema design)
+    - ApplicationDbContext.cs (Inherits from DbContext)
+    - Add into DI container
+    - Provide connection string from startup project (Api)
+    - Seed database
+    - Expose endpoint to retrieve weather records
+
+3. Add NuGet Package - EntityFrameworkCore.Tools to startup project (CodeFirst.Api)
+    ```console
+    PM > Install-Package Microsoft.EntityFrameworkCore.Tools
+    ```
+
+
+4. Time to migrate the defined schemas into your database. Click [here](efcore-tools) for more information regarding the commands for EFCore.Tools
+
+    - Add Migration (This will generate the migration file and not apply to the database yet)
+    ```console
+    PM> Add-Migration InitialCreate -p CodeFirst.Persistence -s CodeFirst.Api
+    ```
+
+    - Update Database (This will apply the migration into your database. At this point, you should have configured a valid connection string.)
+    ```console
+    PM> Update-Database -p CodeFirst.Persistence -s CodeFirst.Api
+    ```
+
 
 # Database First
 Database first will require you to first set up the schemas in your database (or use an existing database) and you will be scaffolding it into your codebase.
@@ -86,25 +97,23 @@ Steps taken:
 
 1. Add NuGet Packages - EntityFrameworkCore and EntityFrameworkCore.SqlServer (or any other database)
 
-    ```sh
-    PM > Install-Package Microsoft.EntityFrameworkCore
-    PM > Install-Package Microsoft.EntityFrameworkCore.SqlServer
+    ```console
+    PM> Install-Package Microsoft.EntityFrameworkCore
+    PM> Install-Package Microsoft.EntityFrameworkCore.SqlServer
     ```
 
 2. Setup your database (if not already exists) in your environment.
 
 3. Scaffold your database (Fetch and create the table models from existing database)
 
-    ```sh
-    PM > Scaffold-Context 'Data Source=localhost;Initial Catalog=DatabaseName;Trusted_Connection=True' Microsoft.EntityFrameworkCore.SqlServer
+    ```console
+    PM> Scaffold-Context 'Data Source=localhost;Initial Catalog=DatabaseName;Trusted_Connection=True' Microsoft.EntityFrameworkCore.SqlServer
     ```
 
     Click [here](efcore-tools) for additional parameters to configure your scaffold.
 
 
-### Built With
-- .NET 7
-- EFCore 7
+
 
 
 
