@@ -11,34 +11,6 @@
   </p>
 </div>
 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
-
-
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
@@ -62,22 +34,22 @@ Steps taken:
     PM > Install-Package Microsoft.EntityFrameworkCore.SqlServer
     ```
 
-2. Create files:
+2. Add NuGet Package - EntityFrameworkCore.Tools to startup project (CodeFirst.Api)
+    ```console
+    PM > Install-Package Microsoft.EntityFrameworkCore.Tools
+    ```
+3. Add Project Reference -> From: CodeFirst.Api to CodeFirst.Persistence
+
+4. Create files:
     - Weather.cs (Entity)
     - WeatherConfiguration.cs (Schema design)
     - ApplicationDbContext.cs (Inherits from DbContext)
-    - Add into DI container
+    - Add database context into DI container
     - Provide connection string from startup project (Api)
     - Seed database
     - Expose endpoint to retrieve weather records
 
-3. Add NuGet Package - EntityFrameworkCore.Tools to startup project (CodeFirst.Api)
-    ```console
-    PM > Install-Package Microsoft.EntityFrameworkCore.Tools
-    ```
-
-
-4. Time to migrate the defined schemas into your database. Click [here](efcore-tools) for more information regarding the commands for EFCore.Tools
+5. Time to migrate the defined schemas into your database. Click [here](efcore-tools) for more information regarding the commands for EFCore.Tools
 
     - Add Migration (This will generate the migration file and not apply to the database yet)
     ```console
@@ -102,140 +74,61 @@ Steps taken:
     PM> Install-Package Microsoft.EntityFrameworkCore.SqlServer
     ```
 
-2. Setup your database (if not already exists) in your environment.
-
-3. Scaffold your database (Fetch and create the table models from existing database)
-
+2. Add NuGet Package - EntityFrameworkCore.Tools to startup project (DatabaseFirst.Api)
     ```console
-    PM> Scaffold-Context 'Data Source=localhost;Initial Catalog=DatabaseName;Trusted_Connection=True' Microsoft.EntityFrameworkCore.SqlServer
+    PM > Install-Package Microsoft.EntityFrameworkCore.Tools
     ```
 
+3. Add Project Reference -> From: DatabaseFirst.Api to DatabaseFirst.Persistence
+
+4. Setup your database (if not already exists) in your environment.
+
+5. Add connection string to appsettings.json in DatabaseFirst.Api
+
+6. Scaffold your database (Fetch and create the table models from existing database)
+
+    ```console
+    PM> Scaffold-DbContext name=Database Microsoft.EntityFrameworkCore.SqlServer -ContextDir . -Context ApplicationDbContext -OutputDir Weathers -StartupProject DatabaseFirst.Api -Project DatabaseFirst.Persistence
+    ```
     Click [here](efcore-tools) for additional parameters to configure your scaffold.
 
+7. Add database context into DI container
 
-
-
-
+8. Expose endpoint to retrieve weather records
 
 <!-- GETTING STARTED -->
-## Getting Started
-
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
-### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
-
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+To install and test on your local machine:
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
    ```sh
-   git clone https://github.com/your_username_/Project-Name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
+   git clone https://github.com/darrenleeyx/KM_EFCore
    ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+2. Code First
+    - Update the connection string in appsettings.json (CodeFirst.Api)
+    - Update your database with the current migration
+       ```console
+       PM> Update-Database -p CodeFirst.Persistence -s CodeFirst.Api
+       ```
+    - Run CodeFirst.Api
+ 
+ 3. Database First
+    - Create the database using the script
+    ```sql
+    CREATE DATABASE [Weather_DatabaseFirst];
+	
+	CREATE TABLE [Weather_DatabaseFirst].[dbo].[Weathers](
+	    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY,
+	    [DateTime] [datetime2](7) NOT NULL,
+	    [Description] [nvarchar](max) NOT NULL);
 
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
-
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CONTRIBUTING -->
-## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- LICENSE -->
-## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CONTACT -->
-## Contact
-
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
-
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
-
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+    INSERT INTO [Weather_DatabaseFirst].[dbo].[Weathers] VALUES
+    ('77c376d8-d7a8-474d-b62a-4cc3b4d156bf', '2023-10-22 04:24:56.1222162', 'Cloudy');
+    ```
+    - Update the connection string in appsettings.json (DatabaseFirst.Api)
+    - Run DatabaseFirst.Api
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
